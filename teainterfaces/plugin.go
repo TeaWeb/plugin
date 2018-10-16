@@ -1,7 +1,7 @@
 package teainterfaces
 
 type PluginInterface interface {
-	Name() string
+	Name() string // 插件名
 	Code() string
 	Site() string // 网站
 	Version() string
@@ -9,7 +9,6 @@ type PluginInterface interface {
 	Developer() string
 	Description() string
 
-	Widgets() []interface{}
 	OnLoad() error
 	OnReload() error
 	OnStart() error

@@ -2,8 +2,23 @@ package plugins
 
 import "github.com/TeaWeb/plugin/teainterfaces"
 
-type Plugin struct {
+type PluginWidgets struct {
 	widgets []interface{}
+}
+
+func (this *PluginWidgets) Widgets() []interface{} {
+	return this.widgets
+}
+
+func (this *PluginWidgets) AddWidget(widget teainterfaces.WidgetInterface) {
+	if this.widgets == nil {
+		this.widgets = []interface{}{widget}
+	} else {
+		this.widgets = append(this.widgets, widget)
+	}
+}
+
+type Plugin struct {
 }
 
 func (this *Plugin) Site() string {
@@ -24,18 +39,6 @@ func (this *Plugin) Developer() string {
 
 func (this *Plugin) Description() string {
 	return ""
-}
-
-func (this *Plugin) Widgets() []interface{} {
-	return this.widgets
-}
-
-func (this *Plugin) AddWidget(widget teainterfaces.WidgetInterface) {
-	if this.widgets == nil {
-		this.widgets = []interface{}{widget}
-	} else {
-		this.widgets = append(this.widgets, widget)
-	}
 }
 
 func (this *Plugin) OnLoad() error {

@@ -12,6 +12,7 @@ func New() teainterfaces.PluginInterface {
 
 type DemoPlugin struct {
 	plugins.Plugin
+	plugins.PluginWidgets
 }
 
 func (this *DemoPlugin) Name() string {
@@ -107,3 +108,17 @@ func (this *DemoPlugin) OnLoad() error {
 
 	return nil
 }
+
+/**func (this *DemoPlugin) FilterRequest(request *http.Request) bool {
+	log.Println("request:", request.URL)
+	return true
+}**/
+
+/**
+func (this *DemoPlugin) FilterResponse(response *http.Response, writer http.ResponseWriter) bool {
+	writer.Header().Set("Server", "demo-server")
+	writer.Header().Del("X-Powered-By")
+	writer.Write([]byte("Hello, World"))
+	response.Body.Close()
+	return false
+}**/
