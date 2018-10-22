@@ -53,14 +53,19 @@ then
     go get "github.com/vmihailenco/msgpack"
 fi
 
+if [ ! -d "${GOPATH}/src/github.com/TeaWeb/plugin" ]
+then
+    go get "github.com/TeaWeb/plugin"
+fi
+
 go build -o demo.tea demo.go
 ~~~
 
 ### 代码示例
-请见 `main/demo.go` 。
+请见 [main/demo.go ](main/demo.go)。
 
 ### 安装插件
-`TeaWeb`插件安装在`plugins/`目录下：
+将`TeaWeb`插件拷贝到`plugins/`目录下，即可完成安装：
 ~~~
 bin/
 plugins/
