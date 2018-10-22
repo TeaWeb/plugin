@@ -3,95 +3,67 @@ package charts
 import "sync"
 
 type Row struct {
-	columns []interface{}
-}
-
-func (this *Row) Columns() []interface{} {
-	return this.columns
-}
-
-func (this *Row) SetColumns(columns []interface{}) {
-	this.columns = columns
+	Columns []*Column
 }
 
 type Column struct {
-	text  string
-	width float64 // 百分比，比如 30 表示 30%
-}
-
-func (this *Column) Text() string {
-	return this.text
-}
-
-func (this *Column) SetText(text string) {
-	this.text = text
-}
-
-func (this *Column) SetWidth(width float64) {
-	this.width = width
-}
-
-func (this *Column) Width() float64 {
-	return this.width
+	Text  string
+	Width float64 // 百分比，比如 30 表示 30%
 }
 
 func NewTable() *Table {
 	p := &Table{
-		rows: []interface{}{},
+		Rows: []*Row{},
 	}
-	p.SetType("table")
+	p.ChartType = "table"
 	return p
 }
 
 type Table struct {
 	Chart
 
-	rows   []interface{}
+	Rows   []*Row
 	locker sync.Mutex
 
-	width []float64
-}
-
-func (this *Table) Rows() []interface{} {
-	return this.rows
+	Width []float64
 }
 
 func (this *Table) ResetRows() {
 	this.locker.Lock()
 	defer this.locker.Unlock()
 
-	this.rows = []interface{}{}
+	this.Rows = []*Row{}
 }
 
-func (this *Table) AddRow(text ... string) {
+func (this *Table) AddRow(text ...string) {
 	this.locker.Lock()
 	defer this.locker.Unlock()
 
-	columns := []interface{}{}
+	columns := []*Column{}
 	for index, t := range text {
-		if index < len(this.width) {
+		if index < len(this.Width) {
 			columns = append(columns, &Column{
-				text:  t,
-				width: this.width[index],
+				Text:  t,
+				Width: this.Width[index],
 			})
 		} else {
 			columns = append(columns, &Column{
-				text: t,
+				Text: t,
 			})
 		}
 	}
-	this.rows = append(this.rows, &Row{
-		columns: columns,
+	this.Rows = append(this.Rows, &Row{
+		Columns: columns,
 	})
 }
 
-func (this *Table) SetWidth(wide ... float64) {
-	this.width = wide
+func (this *Table) SetWidth(wide ...float64) {
+	this.Width = wide
 
-	for _, row := range this.rows {
-		for index, column := range row.(*Row).columns {
-			if index < len(this.width) {
-				column.(*Column).width = this.width[index]
+	for _, row := range this.Rows {
+		for index, column := range row.Columns {
+			if index < len(this.Width) {
+				column.Width = this.Width[index]
 			}
 		}
 	}

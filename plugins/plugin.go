@@ -1,62 +1,104 @@
 package plugins
 
-import "github.com/TeaWeb/plugin/teainterfaces"
+import (
+	"net/http"
+)
 
-type PluginWidgets struct {
-	widgets []interface{}
-}
-
-func (this *PluginWidgets) Widgets() []interface{} {
-	return this.widgets
-}
-
-func (this *PluginWidgets) AddWidget(widget teainterfaces.WidgetInterface) {
-	if this.widgets == nil {
-		this.widgets = []interface{}{widget}
-	} else {
-		this.widgets = append(this.widgets, widget)
-	}
+func NewPlugin() *Plugin {
+	return &Plugin{}
 }
 
 type Plugin struct {
+	Name        string
+	Code        string
+	Site        string
+	Version     string
+	Date        string
+	Developer   string
+	Description string
+
+	Widgets []*Widget
+
+	HasRequestFilter  bool
+	HasResponseFilter bool
+
+	onReloadFunc func()
+	onStartFunc  func()
+	onStopFunc   func()
+
+	onRequestFunc  func(request *http.Request) bool
+	onResponseFunc func(response *http.Response, writer http.ResponseWriter) bool
 }
 
-func (this *Plugin) Site() string {
-	return ""
+func (this *Plugin) OnReload(f func()) {
+	this.onReloadFunc = f
 }
 
-func (this *Plugin) Version() string {
-	return "1.0.0"
+func (this *Plugin) Reload() {
+	if this.onReloadFunc != nil {
+		this.onReloadFunc()
+	}
 }
 
-func (this *Plugin) Date() string {
-	return ""
+func (this *Plugin) OnStart(f func()) {
+	this.onStartFunc = f
 }
 
-func (this *Plugin) Developer() string {
-	return "UNKNOWN"
+func (this *Plugin) Start() {
+	if this.onStartFunc != nil {
+		this.onStartFunc()
+	}
 }
 
-func (this *Plugin) Description() string {
-	return ""
+func (this *Plugin) OnStop(f func()) {
+	this.onStopFunc = f
 }
 
-func (this *Plugin) OnLoad() error {
+func (this *Plugin) Stop() {
+	if this.onStopFunc != nil {
+		this.onStopFunc()
+	}
+}
+
+// 添加Widget
+func (this *Plugin) AddWidget(widget *Widget) {
+	if len(widget.Id) == 0 {
+		widget.Id = RandString(16)
+	}
+	this.Widgets = append(this.Widgets, widget)
+}
+
+// 根据ID获取Widget
+func (this *Plugin) WidgetWithId(widgetId string) *Widget {
+	for _, widget := range this.Widgets {
+		if widget.Id == widgetId {
+			return widget
+		}
+	}
 	return nil
 }
 
-func (this *Plugin) OnReload() error {
-	return nil
+// 过滤请求，如果返回false，则不会往下执行
+func (this *Plugin) OnRequest(f func(request *http.Request) bool) {
+	this.onRequestFunc = f
+
+	if this.onRequestFunc != nil {
+		this.HasRequestFilter = true
+	}
 }
 
-func (this *Plugin) OnStart() error {
-	return nil
+func (this *Plugin) FilterRequest(request *http.Request) bool {
+	if this.onRequestFunc != nil {
+		return this.onRequestFunc(request)
+	}
+	return true
 }
 
-func (this *Plugin) OnStop() error {
-	return nil
-}
+//  过滤响应，如果返回false，则不会往下执行
+func (this *Plugin) OnResponse(f func(response *http.Response, writer http.ResponseWriter) bool) {
+	this.onResponseFunc = f
 
-func (this *Plugin) OnUnload() error {
-	return nil
+	if this.onResponseFunc != nil {
+		this.HasResponseFilter = true
+	}
 }

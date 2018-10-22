@@ -1,40 +1,52 @@
 package charts
 
-type Chart struct {
-	id        string
-	chartType string
-	name      string
-	detail    string
+type ChartInterface interface {
+	ChartId() string
+	SetId(id string)
+
+	OnReload(f func())
+	Reload()
+
+	NotifyChange()
+	IsChanged() bool
 }
 
-func (this *Chart) Id() string {
-	return this.id
+type Chart struct {
+	Id        string
+	ChartType string
+	Name      string
+	Detail    string
+
+	isChanged    bool
+	onReloadFunc func()
+}
+
+func (this *Chart) ChartId() string {
+	return this.Id
 }
 
 func (this *Chart) SetId(id string) {
-	this.id = id
+	this.Id = id
 }
 
-func (this *Chart) Type() string {
-	return this.chartType
+func (this *Chart) OnReload(f func()) {
+	this.onReloadFunc = f
 }
 
-func (this *Chart) SetType(chartType string) {
-	this.chartType = chartType
+func (this *Chart) Reload() {
+	if this.onReloadFunc != nil {
+		this.onReloadFunc()
+	}
 }
 
-func (this *Chart) Name() string {
-	return this.name
+func (this *Chart) NotifyChange() {
+	this.isChanged = true
 }
 
-func (this *Chart) SetName(name string) {
-	this.name = name
-}
-
-func (this *Chart) Detail() string {
-	return this.detail
-}
-
-func (this *Chart) SetDetail(detail string) {
-	this.detail = detail
+func (this *Chart) IsChanged() bool {
+	if !this.isChanged {
+		return false
+	}
+	this.isChanged = false
+	return true
 }
