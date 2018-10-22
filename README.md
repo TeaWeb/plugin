@@ -15,26 +15,45 @@
 2. 在`main/`目录下建一个插件的Go文件，比如命名为`demo.go`；
 3. 在`demo.go`中实现
     ~~~go
-    func New() teainterfaces.PluginInterface {
-        return &DemoPlugin{}
-    }
+    package main
     
-    type DemoPlugin struct {
-        plugins.Plugin
-    }
+    import (
+        "github.com/TeaWeb/plugin/charts"
+        "github.com/TeaWeb/plugin/loader"
+        "github.com/TeaWeb/plugin/plugins"
+    )
+    
+    func main() {
+        demoPlugin := plugins.NewPlugin()
+        demoPlugin.Name = "Demo Plugin"
+        demoPlugin.Code = "com.example.demo"
+        demoPlugin.Developer = "Liu xiangchao"
+        demoPlugin.Version = "1.0.0"
+        demoPlugin.Date = "2018-10-15"
+        demoPlugin.Site = "https://github.com/TeaWeb/build"
+        demoPlugin.Description = "这是一个Demo插件"
+        
+        loader.Start(demoPlugin)
+    }	
     ~~~
-4. 可以覆盖`DemoPlguin`中的方法，以提供插件的名称、描述等信息，或者实现其他功能；
-5. 使用`go build -o demo.so -buildmode=plugin demo.go`编译插件；
-6. 将编译成功后的`demo.so`放到`TeaWeb`的`plugins/`目录下，重启`TeaWeb`后生效。
+4. 可以修改`demoPlugin`，以提供插件的名称、描述等信息，或者实现其他功能；
+5. 使用`go build -o demo.tea demo.go`编译插件；
+6. 将编译成功后的`demo.tea`放到`TeaWeb`的`plugins/`目录下，重启`TeaWeb`后生效。
 
 ### 构建脚本
 *build.sh*
-~~~
+~~~bash
 #!/usr/bin/env bash
 
 export GOPATH=`pwd`/../../
+export CGO_ENABLED=1
 
-go build -o demo.so -buildmode=plugin demo.go
+if [ ! -d "${GOPATH}/src/github.com/vmihailenco/msgpack" ]
+then
+    go get "github.com/vmihailenco/msgpack"
+fi
+
+go build -o demo.tea demo.go
 ~~~
 
 ### 代码示例
@@ -45,7 +64,7 @@ go build -o demo.so -buildmode=plugin demo.go
 ~~~
 bin/
 plugins/
-  demo.so
+  demo.tea
   ...
 ~~~
 
