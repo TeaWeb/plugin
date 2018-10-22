@@ -20,20 +20,16 @@ func main() {
 	addWidget(demoPlugin)
 
 	// 请求筛选
-	//demoPlugin.OnRequest(func(request *http.Request) bool {
-	/**log.Println("[demo]request:", request.URL.String())
-	request.RequestURI = "/hello/world"
-	request.URL.Path = "/hello/world"
-	request.Header.Set("hello", "world")
-
-	log.Println("[demo]set path", request.URL, request.URL.Path)**/
-
-	//	return true
-	//})
+	/**demoPlugin.OnRequest(func(request *http.Request) bool {
+		log.Println("[demo]request:", request.URL.String())
+		request.Header.Set("hello", "world")
+		return true
+	})**/
 
 	loader.Start(demoPlugin)
 }
 
+// 添加Widget
 func addWidget(plugin *plugins.Plugin) {
 	widget := plugins.NewWidget()
 	widget.Name = "Demo Chart"
@@ -97,17 +93,3 @@ func addWidget(plugin *plugins.Plugin) {
 	lineChart.Labels = []string{"A", "B", "C", "D", "E"}
 	widget.AddChart(lineChart)
 }
-
-/**func (this *DemoPlugin) FilterRequest(request *http.Request) bool {
-	log.Println("request:", request.URL)
-	return true
-}**/
-
-/**
-func (this *DemoPlugin) FilterResponse(response *http.Response, writer http.ResponseWriter) bool {
-	writer.Header().Set("Server", "demo-server")
-	writer.Header().Del("X-Powered-By")
-	writer.Write([]byte("Hello, World"))
-	response.Body.Close()
-	return false
-}**/
