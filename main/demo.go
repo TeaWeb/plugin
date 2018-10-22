@@ -2,74 +2,65 @@ package main
 
 import (
 	"github.com/TeaWeb/plugin/charts"
+	"github.com/TeaWeb/plugin/loader"
 	"github.com/TeaWeb/plugin/plugins"
-	"github.com/TeaWeb/plugin/teainterfaces"
 )
 
-func New() teainterfaces.PluginInterface {
-	return &DemoPlugin{}
+func main() {
+	demoPlugin := plugins.NewPlugin()
+	demoPlugin.Name = "Demo Plugin"
+	demoPlugin.Code = "com.example.demo"
+	demoPlugin.Developer = "Liu xiangchao"
+	demoPlugin.Version = "1.0.0"
+	demoPlugin.Date = "2018-10-15"
+	demoPlugin.Site = "https://github.com/TeaWeb/build"
+	demoPlugin.Description = "这是一个Demo插件"
+
+	// 添加widget
+	addWidget(demoPlugin)
+
+	// 请求筛选
+	//demoPlugin.OnRequest(func(request *http.Request) bool {
+	/**log.Println("[demo]request:", request.URL.String())
+	request.RequestURI = "/hello/world"
+	request.URL.Path = "/hello/world"
+	request.Header.Set("hello", "world")
+
+	log.Println("[demo]set path", request.URL, request.URL.Path)**/
+
+	//	return true
+	//})
+
+	loader.Start(demoPlugin)
 }
 
-type DemoPlugin struct {
-	plugins.Plugin
-	plugins.PluginWidgets
-}
-
-func (this *DemoPlugin) Name() string {
-	return "Demo Plugin"
-}
-
-func (this *DemoPlugin) Code() string {
-	return "com.example.demo"
-}
-
-func (this *DemoPlugin) Developer() string {
-	return "Liu xiangchao"
-}
-
-func (this *DemoPlugin) Version() string {
-	return "1.0.0"
-}
-
-func (this *DemoPlugin) Date() string {
-	return "2018-10-15"
-}
-
-func (this *DemoPlugin) Site() string {
-	return "https://github.com/TeaWeb/build"
-}
-
-func (this *DemoPlugin) Description() string {
-	return "这是一个Demo插件"
-}
-
-func (this *DemoPlugin) OnLoad() error {
+func addWidget(plugin *plugins.Plugin) {
 	widget := plugins.NewWidget()
-	widget.SetName("Demo Chart")
+	widget.Name = "Demo Chart"
 
-	this.AddWidget(widget)
+	plugin.AddWidget(widget)
 
 	// 添加一个进度条
 	progressBar := charts.NewProgressBar()
-	progressBar.SetValue(30)
-	progressBar.SetName("ProgressBar")
-	progressBar.SetDetail("ProgressBar Detail")
+	progressBar.Value = 30
+	progressBar.Name = "ProgressBar"
+	progressBar.Detail = "ProgressBar Detail"
 	widget.AddChart(progressBar)
 
 	// 刷新Widget时的操作
-	widget.SetOnReload(func() error {
-		newValue := progressBar.Value() + 1
+	widget.OnReload(func() {
+		newValue := progressBar.Value + 1
 		if newValue > 100 {
 			newValue = 100
 		}
-		progressBar.SetValue(newValue)
-		return nil
+		progressBar.Value = newValue
+		progressBar.NotifyChange()
 	})
 
 	// 添加一个表格
 	table := charts.NewTable()
-	table.SetName("Table")
-	table.SetDetail("Table Detail")
+	table.Name = "Table"
+	table.Detail = "Table Detail"
 	table.AddRow("Col1", "Col2")
 	table.AddRow("Col3", "Col4")
 	table.SetWidth(30, 70)
@@ -77,36 +68,34 @@ func (this *DemoPlugin) OnLoad() error {
 
 	// 添加一个仪表盘
 	gauge := charts.NewGaugeChart()
-	gauge.SetName("Gauge")
-	gauge.SetDetail("MB")
-	gauge.SetDetail("Gauge Detail")
-	gauge.SetMax(20)
-	gauge.SetValue(15)
+	gauge.Name = "Gauge"
+	gauge.Unit = "MB"
+	gauge.Detail = "Gauge Detail"
+	gauge.Max = 20
+	gauge.Value = 15
 	widget.AddChart(gauge)
 
 	// 添加一个饼图
 	pie := charts.NewPieChart()
-	pie.SetName("Pie")
-	pie.SetDetail("Pie Detail")
-	pie.SetValues([]interface{}{1, 2, 3})
-	pie.SetLabels([]string{"A", "B", "C"})
+	pie.Name = "Pie"
+	pie.Detail = "Pie Detail"
+	pie.Values = []interface{}{1, 2, 3}
+	pie.Labels = []string{"A", "B", "C"}
 	widget.AddChart(pie)
 
 	// 添加一个线图
 	line := charts.NewLine()
-	line.SetName("Line 1")
-	line.SetValues([]interface{}{1, 2, 3, 2, 1})
-	line.SetFilled(true)
-	line.SetColor(teainterfaces.ColorBlue)
+	line.Name = "Line 1"
+	line.Values = []interface{}{1, 2, 3, 2, 1}
+	line.Filled = true
+	line.Color = charts.ColorBlue
 
 	lineChart := charts.NewLineChart()
-	lineChart.SetName("Line")
-	lineChart.SetDetail("Line Detail")
+	lineChart.Name = "Line"
+	lineChart.Detail = "Line Detail"
 	lineChart.AddLine(line)
-	lineChart.SetLabels([]string{"A", "B", "C", "D", "E"})
+	lineChart.Labels = []string{"A", "B", "C", "D", "E"}
 	widget.AddChart(lineChart)
-
-	return nil
 }
 
 /**func (this *DemoPlugin) FilterRequest(request *http.Request) bool {
