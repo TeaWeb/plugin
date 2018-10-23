@@ -12,3 +12,6 @@
 ### 发送
 * Register - 注册插件
 * ReloadChart - 刷新Chart
+* ReloadWidget - 刷新Widget
+* ReloadApps - 刷新插件相关的所有Apps
+* ReloadApp - 刷新单个App

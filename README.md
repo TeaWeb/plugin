@@ -48,11 +48,13 @@
 export GOPATH=`pwd`/../../
 export CGO_ENABLED=1
 
+# msgpack
 if [ ! -d "${GOPATH}/src/github.com/vmihailenco/msgpack" ]
 then
     go get "github.com/vmihailenco/msgpack"
 fi
 
+# TeaWeb
 if [ ! -d "${GOPATH}/src/github.com/TeaWeb/plugin" ]
 then
     go get "github.com/TeaWeb/plugin"

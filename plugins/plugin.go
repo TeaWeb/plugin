@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"github.com/TeaWeb/plugin/apps"
 	"net/http"
 )
 
@@ -18,6 +19,7 @@ type Plugin struct {
 	Description string
 
 	Widgets []*Widget
+	Apps    []*apps.App
 
 	HasRequestFilter  bool
 	HasResponseFilter bool
@@ -78,6 +80,14 @@ func (this *Plugin) WidgetWithId(widgetId string) *Widget {
 	return nil
 }
 
+// 添加App
+func (this *Plugin) AddApp(app *apps.App) {
+	if len(app.Id) == 0 {
+		app.Id = RandString(16)
+	}
+	this.Apps = append(this.Apps, app)
+}
+
 // 过滤请求，如果返回false，则不会往下执行
 func (this *Plugin) OnRequest(f func(request *http.Request) bool) {
 	this.onRequestFunc = f
@@ -94,7 +104,8 @@ func (this *Plugin) FilterRequest(request *http.Request) bool {
 	return true
 }
 
-//  过滤响应，如果返回false，则不会往下执行
+// 过滤响应，如果返回false，则不会往下执行
+// TODO 需要实现
 func (this *Plugin) OnResponse(f func(response *http.Response, writer http.ResponseWriter) bool) {
 	this.onResponseFunc = f
 
