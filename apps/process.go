@@ -1,5 +1,10 @@
 package apps
 
+import (
+	"path/filepath"
+	"strings"
+)
+
 type Listen struct {
 	Network string
 	Addr    string
@@ -33,6 +38,29 @@ func NewProcess(pid int32) *Process {
 	return &Process{
 		Pid:       pid,
 		IsRunning: true,
+	}
+}
+
+// 修改命令的名称
+func (this *Process) ChangeName(newName string) {
+	this.Name = newName
+
+	args := ParseArgs(this.Cmdline)
+	for _, arg := range args {
+		if strings.HasSuffix(arg, "/"+this.Name) {
+			this.File = arg
+			if arg[0] == '/' {
+				this.Dir = filepath.Dir(this.File)
+			} else {
+				this.File = this.Cwd + "/" + this.File
+				absFile, err := filepath.Abs(this.File)
+				if err == nil {
+					this.File = absFile
+				}
+				this.Dir = filepath.Dir(this.File)
+			}
+			break
+		}
 	}
 }
 

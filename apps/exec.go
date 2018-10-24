@@ -13,7 +13,7 @@ func Exec(command string, arg ... string) (string, error) {
 	}
 
 	cmd := exec.Command(binFile, arg ...)
-	data, err := cmd.Output()
+	data, err := cmd.CombinedOutput()
 	if err != nil {
 		return "", err
 	}
