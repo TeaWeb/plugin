@@ -79,10 +79,13 @@ func PsPid(pid int32) (*Process, error) {
 		return nil, errors.New("pid should not small than '0'")
 	}
 
-	keywords := "user=,pid=,ppid=,%cpu=,uid=,gid=,lstart=,%mem=,rss=,vsize=,command="
 	patterns := `^(?U)(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+)\s+(\S+.+\d{4})\s+(\S+)\s+(\S+)\s+(\S+)\s+(.+)\n?$`
 
-	resultString, err := Exec("ps", "-p", fmt.Sprintf("%d", pid), "-o", keywords)
+	args := []string{"-p", fmt.Sprintf("%d", pid)}
+	for _, keyword := range []string{"user", "pid", "ppid", "%cpu", "uid", "gid", "lstart", "%mem", "rss", "vsize", "command"} {
+		args = append(args, "-o", keyword+"=")
+	}
+	resultString, err := Exec("ps", args ...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,9 +98,7 @@ func PsPid(pid int32) (*Process, error) {
 
 	matches := regexp.MustCompile(patterns).FindStringSubmatch(resultString)
 	if len(matches) <= 1 {
-		if len(resultString) == 0 {
-			return nil, errors.New("process '" + fmt.Sprintf("%d", pid) + "' not found")
-		}
+		return nil, errors.New("process '" + fmt.Sprintf("%d", pid) + "' not found")
 	}
 
 	p := NewProcess(pid)
