@@ -9,6 +9,7 @@ func init() {
 		new(ReloadAction),
 		new(ReloadWidgetAction),
 		new(ReloadChartAction),
+		new(ReloadAppsAction),
 		new(FilterRequestAction),
 		new(FilterResponseAction),
 	)

@@ -1,14 +1,20 @@
 package apps
 
 import (
+	"errors"
 	"fmt"
 	"github.com/TeaWeb/plugin/utils/types"
 	"strings"
 )
 
-func Lsof(pid int32) (results []*LsofResult) {
+func Lsof(pid int32) (results []*LsofResult, err error) {
 	resultString, err := Exec("lsof", "-Pan", "-FctnLpPT0", "-p", fmt.Sprintf("%d", pid))
-	if err != nil || len(resultString) == 0 {
+	if err != nil {
+		return
+	}
+
+	if len(resultString) == 0 {
+		err = errors.New("lsof fail")
 		return
 	}
 
@@ -41,6 +47,10 @@ func Lsof(pid int32) (results []*LsofResult) {
 			}
 		}
 		results = append(results, result)
+	}
+
+	if len(results) == 0 {
+		err = errors.New("no process matched")
 	}
 
 	return

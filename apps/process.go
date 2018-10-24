@@ -33,7 +33,11 @@ func NewProcess(pid int32) *Process {
 
 // open files, connections, ...
 func (this *Process) StatOpenFiles() {
-	for _, result := range Lsof(this.Pid) {
+	results, err := Lsof(this.Pid)
+	if err != nil {
+		return
+	}
+	for _, result := range results {
 		if result.IsCwd() {
 			if len(this.Cwd) == 0 {
 				this.Cwd = result.Name
