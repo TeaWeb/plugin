@@ -6,6 +6,7 @@
 * Reload - 刷新插件
 * ReloadWidget - 刷新Widget
 * ReloadChart - 刷新Chart
+* ReloadApp - 刷新单个App
 * FilterRequest - 过滤HTTP请求
 * FilterResponse - 过滤HTTP响应 
 

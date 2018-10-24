@@ -17,17 +17,22 @@ type Process struct {
 
 	CreateTime  int64 // 时间戳
 	Cmdline     string
+	File        string // 命令行文件路径
+	Dir         string // 命令行文件所在目录
 	CPUUsage    *CPUUsage
 	MemoryUsage *MemoryUsage
 
 	OpenFiles   []string
 	Connections []string
 	Listens     []*Listen
+
+	IsRunning bool
 }
 
 func NewProcess(pid int32) *Process {
 	return &Process{
-		Pid: pid,
+		Pid:       pid,
+		IsRunning: true,
 	}
 }
 
@@ -53,4 +58,31 @@ func (this *Process) StatOpenFiles() {
 			this.Connections = append(this.Connections, result.LAddr()+"->"+result.RAddr())
 		}
 	}
+}
+
+// 刷新状态
+func (this *Process) Reload() error {
+	this.CPUUsage = nil
+	this.MemoryUsage = nil
+
+	this.OpenFiles = []string{}
+	this.Connections = []string{}
+	this.Listens = []*Listen{}
+
+	p, err := PsPid(this.Pid)
+	if err != nil {
+		this.IsRunning = false
+		return err
+	}
+
+	if p.Cmdline != this.Cmdline || p.Ppid != this.Ppid {
+		this.IsRunning = false
+		return nil
+	}
+
+	this.IsRunning = true
+	this.CPUUsage = p.CPUUsage
+	this.MemoryUsage = p.MemoryUsage
+
+	return nil
 }

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/TeaWeb/plugin/utils/types"
 	"log"
+	"path/filepath"
 	"regexp"
 	"strings"
 	"time"
@@ -30,7 +31,7 @@ func PsLookup(lookup string, matchPatterns []string, onlyParent bool) (result []
 		// check parent
 		if onlyParent {
 			if p.Ppid > 128 {
-				break
+				continue
 			}
 		}
 
@@ -142,6 +143,27 @@ func PsPid(pid int32) (*Process, error) {
 				if nIndex > 0 {
 					p.Cwd = resultString[nIndex+2:]
 				}
+			}
+		}
+	}
+
+	// file & dir
+	{
+		cmdArgs := ParseArgs(p.Cmdline)
+		for _, arg := range cmdArgs {
+			if strings.HasSuffix(arg, "/"+p.Name) {
+				p.File = arg
+				if arg[0] == '/' {
+					p.Dir = filepath.Dir(p.File)
+				} else {
+					p.File = p.Cwd + "/" + p.File
+					absFile, err := filepath.Abs(p.File)
+					if err == nil {
+						p.File = absFile
+					}
+					p.Dir = filepath.Dir(p.File)
+				}
+				break
 			}
 		}
 	}

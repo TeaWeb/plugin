@@ -28,6 +28,8 @@ type Plugin struct {
 	onStartFunc  func()
 	onStopFunc   func()
 
+	onReloadAppsFunc func()
+
 	onRequestFunc  func(request *http.Request) bool
 	onResponseFunc func(response *http.Response, writer http.ResponseWriter) bool
 }
@@ -80,12 +82,40 @@ func (this *Plugin) WidgetWithId(widgetId string) *Widget {
 	return nil
 }
 
-// 添加App
-func (this *Plugin) AddApp(app *apps.App) {
-	if len(app.Id) == 0 {
-		app.Id = RandString(16)
+// 刷新apps时回调
+func (this *Plugin) OnReloadApps(f func()) {
+	this.onReloadAppsFunc = f
+}
+
+// 刷新apps
+func (this *Plugin) ReloadApps() {
+	if this.onReloadAppsFunc != nil {
+		this.onReloadAppsFunc()
 	}
-	this.Apps = append(this.Apps, app)
+}
+
+// 添加App
+func (this *Plugin) AddApp(app ... *apps.App) {
+	for _, a := range app {
+		if len(a.Id) == 0 {
+			a.Id = RandString(16)
+		}
+		this.Apps = append(this.Apps, a)
+	}
+
+	if len(this.Apps) > 0 {
+		this.ReloadApps()
+	}
+}
+
+// 根据ID获取App
+func (this *Plugin) AppWithId(appId string) *apps.App {
+	for _, app := range this.Apps {
+		if app.Id == appId {
+			return app
+		}
+	}
+	return nil
 }
 
 // 过滤请求，如果返回false，则不会往下执行

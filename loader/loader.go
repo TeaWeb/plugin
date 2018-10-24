@@ -41,6 +41,12 @@ func NewLoader(plugin *plugins.Plugin) *Loader {
 
 	loader.thisValue = reflect.ValueOf(loader)
 
+	plugin.OnReloadApps(func() {
+		loader.Write(&messages.ReloadAppsAction{
+			Apps: plugin.Apps,
+		})
+	})
+
 	return loader
 }
 
@@ -157,6 +163,25 @@ func (this *Loader) ActionReloadWidget(action *messages.ReloadWidgetAction) {
 	}
 }
 
+// 刷新单个App
+func (this *Loader) ActionReloadApp(action *messages.ReloadAppAction) {
+	if action.App == nil {
+		return
+	}
+	app := this.plugin.AppWithId(action.App.Id)
+	if app != nil {
+		err := app.Reload()
+		if err != nil {
+			log.Println("[plugin]reload app:", err.Error())
+		} else {
+			this.Write(&messages.ReloadAppAction{
+				App: app,
+			})
+		}
+	}
+}
+
+// 对Request进行过滤
 func (this *Loader) ActionFilterRequest(action *messages.FilterRequestAction) {
 	req, err := action.Request()
 	if err != nil {

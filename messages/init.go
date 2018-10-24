@@ -7,6 +7,7 @@ func init() {
 		new(StartAction),
 		new(StopAction),
 		new(ReloadAction),
+		new(ReloadAppAction),
 		new(ReloadWidgetAction),
 		new(ReloadChartAction),
 		new(ReloadAppsAction),
