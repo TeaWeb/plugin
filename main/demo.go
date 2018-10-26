@@ -4,6 +4,7 @@ import (
 	"github.com/TeaWeb/plugin/charts"
 	"github.com/TeaWeb/plugin/loader"
 	"github.com/TeaWeb/plugin/plugins"
+	"net/http"
 )
 
 func main() {
@@ -17,7 +18,7 @@ func main() {
 	demoPlugin.Description = "这是一个Demo插件"
 
 	// 添加widget
-	addWidget(demoPlugin)
+	// addWidget(demoPlugin)
 
 	// 请求筛选
 	/**demoPlugin.OnRequest(func(request *http.Request) bool {
@@ -25,6 +26,12 @@ func main() {
 		request.Header.Set("hello", "world")
 		return true
 	})**/
+
+	demoPlugin.OnResponse(func(response *http.Response) bool {
+		response.Header.Set("hello", "world")
+		response.Header.Set("from", "demo")
+		return true
+	})
 
 	loader.Start(demoPlugin)
 }

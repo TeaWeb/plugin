@@ -56,7 +56,9 @@ func (this *Queue) Wait(action ActionInterface) (respAction ActionInterface) {
 
 func (this *Queue) Notify(resp ActionInterface) {
 	messageId := resp.MessageId()
+	this.locker.Lock()
 	c, found := this.done[messageId]
+	this.locker.Unlock()
 	if !found {
 		return
 	}

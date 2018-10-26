@@ -5,10 +5,12 @@ import (
 	"net/http"
 )
 
+// 构造新的插件对象
 func NewPlugin() *Plugin {
 	return &Plugin{}
 }
 
+// 插件定义
 type Plugin struct {
 	Name        string
 	Code        string
@@ -31,33 +33,39 @@ type Plugin struct {
 	onReloadAppsFunc func()
 
 	onRequestFunc  func(request *http.Request) bool
-	onResponseFunc func(response *http.Response, writer http.ResponseWriter) bool
+	onResponseFunc func(response *http.Response) bool
 }
 
+// 设置刷新时回调函数
 func (this *Plugin) OnReload(f func()) {
 	this.onReloadFunc = f
 }
 
+// 刷新插件
 func (this *Plugin) Reload() {
 	if this.onReloadFunc != nil {
 		this.onReloadFunc()
 	}
 }
 
+// 设置启动时回调函数
 func (this *Plugin) OnStart(f func()) {
 	this.onStartFunc = f
 }
 
+// 启动插件
 func (this *Plugin) Start() {
 	if this.onStartFunc != nil {
 		this.onStartFunc()
 	}
 }
 
+// 设置停止时回调函数
 func (this *Plugin) OnStop(f func()) {
 	this.onStopFunc = f
 }
 
+// 停止插件
 func (this *Plugin) Stop() {
 	if this.onStopFunc != nil {
 		this.onStopFunc()
@@ -118,7 +126,7 @@ func (this *Plugin) AppWithId(appId string) *apps.App {
 	return nil
 }
 
-// 过滤请求，如果返回false，则不会往下执行
+// 设置请求时的回调函数，如果返回false，则不会往下执行
 func (this *Plugin) OnRequest(f func(request *http.Request) bool) {
 	this.onRequestFunc = f
 
@@ -127,6 +135,7 @@ func (this *Plugin) OnRequest(f func(request *http.Request) bool) {
 	}
 }
 
+// 调用请求时的回调函数
 func (this *Plugin) FilterRequest(request *http.Request) bool {
 	if this.onRequestFunc != nil {
 		return this.onRequestFunc(request)
@@ -134,12 +143,19 @@ func (this *Plugin) FilterRequest(request *http.Request) bool {
 	return true
 }
 
-// 过滤响应，如果返回false，则不会往下执行
-// TODO 需要实现
-func (this *Plugin) OnResponse(f func(response *http.Response, writer http.ResponseWriter) bool) {
+// 设置发送响应时的回调函数，如果返回false，则不会往下执行
+func (this *Plugin) OnResponse(f func(response *http.Response) bool) {
 	this.onResponseFunc = f
 
 	if this.onResponseFunc != nil {
 		this.HasResponseFilter = true
 	}
+}
+
+// 调用发送响应时的回调函数
+func (this *Plugin) FilterResponse(response *http.Response) bool {
+	if this.onResponseFunc != nil {
+		return this.onResponseFunc(response)
+	}
+	return true
 }

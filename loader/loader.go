@@ -205,6 +205,30 @@ func (this *Loader) ActionFilterRequest(action *messages.FilterRequestAction) {
 	this.Write(respAction)
 }
 
+// 对Response进行过滤
+func (this *Loader) ActionFilterResponse(action *messages.FilterResponseAction) {
+	resp, err := action.Response()
+	if err != nil {
+		log.Println("[plugin]", err.Error())
+		return
+	}
+
+	b := this.plugin.FilterResponse(resp)
+	data, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		log.Println("[plugin]", err.Error())
+		return
+	}
+
+	// 修改后的Resp
+	respAction := &messages.FilterResponseAction{
+		Continue: b,
+		Data:     data,
+	}
+	respAction.SetMessageId(action.MessageId())
+	this.Write(respAction)
+}
+
 func (this *Loader) Write(action messages.ActionInterface) error {
 	msg := messages.NewActionMessage(action)
 	msg.Id = action.MessageId()
