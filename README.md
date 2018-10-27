@@ -18,7 +18,6 @@
     package main
     
     import (
-        "github.com/TeaWeb/plugin/charts"
         "github.com/TeaWeb/plugin/loader"
         "github.com/TeaWeb/plugin/plugins"
     )

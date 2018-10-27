@@ -16,3 +16,5 @@
 * ReloadWidget - 刷新Widget
 * ReloadApps - 刷新插件相关的所有Apps
 * ReloadApp - 刷新单个App
+* FilterRequest - 过滤HTTP请求结果
+* FilterResponse - 过滤HTTP响应结果
