@@ -41,7 +41,7 @@ func NewLoader(plugin *plugins.Plugin) *Loader {
 
 	loader.thisValue = reflect.ValueOf(loader)
 
-	plugin.OnReloadApps(func() {
+	plugin.OnReloadedApps(func() {
 		loader.Write(&messages.ReloadAppsAction{
 			Apps: plugin.Apps,
 		})
@@ -121,7 +121,7 @@ func (this *Loader) CallAction(ptr interface{}, messageId uint32) error {
 
 	method, found := this.methods["Action"+action.Name()]
 	if !found {
-		return errors.New("[plugin]handler for '" + action.Name() + "' not found")
+		return errors.New("handler for '" + action.Name() + "' not found")
 
 	}
 	method.Func.Call([]reflect.Value{this.thisValue, reflect.ValueOf(action)})
@@ -180,6 +180,11 @@ func (this *Loader) ActionReloadApp(action *messages.ReloadAppAction) {
 			})
 		}
 	}
+}
+
+// 刷新所有的Apps
+func (this *Loader) ActionReloadApps(action *messages.ReloadAppsAction) {
+	this.plugin.ReloadApps()
 }
 
 // 对Request进行过滤

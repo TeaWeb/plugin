@@ -30,7 +30,8 @@ type Plugin struct {
 	onStartFunc  func()
 	onStopFunc   func()
 
-	onReloadAppsFunc func()
+	onReloadAppsFunc   func()
+	onReloadedAppsFunc func()
 
 	onRequestFunc  func(request *http.Request) bool
 	onResponseFunc func(response *http.Response) bool
@@ -90,15 +91,32 @@ func (this *Plugin) WidgetWithId(widgetId string) *Widget {
 	return nil
 }
 
+// 重置App数据
+func (this *Plugin) ResetApps() {
+	this.Apps = []*apps.App{}
+}
+
 // 刷新apps时回调
 func (this *Plugin) OnReloadApps(f func()) {
 	this.onReloadAppsFunc = f
 }
 
+// 已刷新App时回调
+func (this *Plugin) OnReloadedApps(f func()) {
+	this.onReloadedAppsFunc = f
+}
+
 // 刷新apps
 func (this *Plugin) ReloadApps() {
+	this.ResetApps()
+
 	if this.onReloadAppsFunc != nil {
 		this.onReloadAppsFunc()
+	}
+
+	// 已刷新
+	if this.onReloadedAppsFunc != nil {
+		this.onReloadedAppsFunc()
 	}
 }
 
@@ -109,10 +127,6 @@ func (this *Plugin) AddApp(app ... *apps.App) {
 			a.Id = RandString(16)
 		}
 		this.Apps = append(this.Apps, a)
-	}
-
-	if len(this.Apps) > 0 {
-		this.ReloadApps()
 	}
 }
 
