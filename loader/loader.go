@@ -106,6 +106,7 @@ func (this *Loader) Load() {
 		}
 
 		if err != nil {
+			log.Println("[plugin]", err.Error())
 			break
 		}
 	}

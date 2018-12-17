@@ -18,7 +18,7 @@ func PsLookup(lookup string, matchPatterns []string, onlyParent bool) (result []
 	}
 
 	if len(resultString) == 0 {
-		err = errors.New("process not found")
+		err = errors.New("process not found(001)")
 		return
 	}
 
@@ -68,7 +68,12 @@ func PsLookup(lookup string, matchPatterns []string, onlyParent bool) (result []
 	}
 
 	if len(result) == 0 {
-		err = errors.New("process not found")
+		// 试图查找非parent的
+		if onlyParent {
+			return PsLookup(lookup, matchPatterns, false)
+		}
+
+		err = errors.New("process not found(002)")
 	}
 
 	return

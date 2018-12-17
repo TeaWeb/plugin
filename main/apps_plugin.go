@@ -18,7 +18,7 @@ func main() {
 	p.Developer = "TeaWeb"
 	p.Site = "https://github.com/TeaWeb/build"
 	p.Code = "apps.teaweb"
-	p.Date = "20"
+	p.Date = "2018-12-15"
 
 	{
 		probe := probes.NewProcessProbe()
