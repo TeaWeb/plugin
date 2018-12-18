@@ -22,17 +22,31 @@ func PsLookup(lookup string, matchPatterns []string, onlyParent bool) (result []
 		return
 	}
 
-	for _, pidString := range strings.Split(resultString, "\n") {
+	pids := strings.Split(strings.TrimSpace(resultString), "\n")
+
+	if onlyParent {
+		resultString, err := Exec("ps", "-p", strings.Join(pids, ","), "-o", "pid=", "-o", "stat=")
+		if err == nil {
+			resultString = strings.TrimSpace(resultString)
+			parentPids := []string{}
+			if len(resultString) > 0 {
+				lines := strings.Split(resultString, "\n")
+				for _, line := range lines {
+					if strings.Index(line, "s") > -1 {
+						parentPids = append(parentPids, regexp.MustCompile("\\d+").FindStringSubmatch(line)[0])
+					}
+				}
+			}
+			if len(parentPids) > 0 {
+				pids = parentPids
+			}
+		}
+	}
+
+	for _, pidString := range pids {
 		p, err := PsPid(types.Int32(pidString))
 		if err != nil {
 			continue
-		}
-
-		// check parent
-		if onlyParent {
-			if p.Ppid > 128 {
-				continue
-			}
 		}
 
 		if len(matchPatterns) > 0 {

@@ -53,3 +53,13 @@ func TestPsChildren(t *testing.T) {
 		t.Log(child)
 	}
 }
+
+func TestPsDir(t *testing.T) {
+	result, err := PsLookup("httpd", []string{}, true)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(result) > 0 {
+		t.Log(result[0])
+	}
+}

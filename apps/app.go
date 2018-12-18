@@ -16,7 +16,7 @@ type App struct {
 	Version   string
 	Icon      []byte
 
-	Cmdline   string
+	Cmdline string
 
 	Processes  []*Process    // 进程列表
 	Operations []*Operation  // TODO
@@ -42,7 +42,11 @@ func (this *App) AddProcess(process ... *Process) {
 
 // 添加进程，包括子进程
 func (this *App) AddAllProcess(process ... *Process) {
-	for _, p := range process {
+	for index, p := range process {
+		if index > 2 { // 只取前两个
+			continue
+		}
+
 		p.StatOpenFiles()
 		this.AddProcess(p)
 
