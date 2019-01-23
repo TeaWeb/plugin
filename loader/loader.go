@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/Microsoft/go-winio"
-	"github.com/TeaWeb/plugin/charts"
 	"github.com/TeaWeb/plugin/messages"
 	"github.com/TeaWeb/plugin/plugins"
 	"log"
@@ -161,34 +160,10 @@ func (this *Loader) ActionStart(action *messages.StartAction) {
 
 func (this *Loader) ActionReload(action *messages.ReloadAction) {
 	this.plugin.Reload()
-
-	for _, widget := range this.plugin.Widgets {
-		widget.Reload()
-	}
 }
 
 func (this *Loader) ActionStop(action *messages.StartAction) {
 	this.plugin.Stop()
-}
-
-func (this *Loader) ActionReloadWidget(action *messages.ReloadWidgetAction) {
-	widget := this.plugin.WidgetWithId(action.WidgetId)
-	if widget != nil {
-		widget.Reload()
-
-		// 检查更新
-		for _, c := range widget.Charts {
-			chart, ok := c.(charts.ChartInterface)
-			if !ok {
-				continue
-			}
-			if chart.IsChanged() {
-				this.Write(&messages.ReloadChartAction{
-					Chart: chart,
-				})
-			}
-		}
-	}
 }
 
 // 刷新单个App

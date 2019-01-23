@@ -8,8 +8,6 @@ func init() {
 		new(StopAction),
 		new(ReloadAction),
 		new(ReloadAppAction),
-		new(ReloadWidgetAction),
-		new(ReloadChartAction),
 		new(ReloadAppsAction),
 		new(FilterRequestAction),
 		new(FilterResponseAction),

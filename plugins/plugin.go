@@ -20,8 +20,7 @@ type Plugin struct {
 	Developer   string
 	Description string
 
-	Widgets []*Widget
-	Apps    []*apps.App
+	Apps []*apps.App
 
 	HasRequestFilter  bool
 	HasResponseFilter bool
@@ -73,24 +72,6 @@ func (this *Plugin) Stop() {
 	}
 }
 
-// 添加Widget
-func (this *Plugin) AddWidget(widget *Widget) {
-	if len(widget.Id) == 0 {
-		widget.Id = RandString(16)
-	}
-	this.Widgets = append(this.Widgets, widget)
-}
-
-// 根据ID获取Widget
-func (this *Plugin) WidgetWithId(widgetId string) *Widget {
-	for _, widget := range this.Widgets {
-		if widget.Id == widgetId {
-			return widget
-		}
-	}
-	return nil
-}
-
 // 重置App数据
 func (this *Plugin) ResetApps() {
 	this.Apps = []*apps.App{}
@@ -121,7 +102,7 @@ func (this *Plugin) ReloadApps() {
 }
 
 // 添加App
-func (this *Plugin) AddApp(app ... *apps.App) {
+func (this *Plugin) AddApp(app ...*apps.App) {
 	for _, a := range app {
 		if len(a.Id) == 0 {
 			a.Id = RandString(16)
