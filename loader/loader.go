@@ -3,6 +3,7 @@ package loader
 import (
 	"encoding/binary"
 	"errors"
+	"github.com/Microsoft/go-winio"
 	"github.com/TeaWeb/plugin/charts"
 	"github.com/TeaWeb/plugin/messages"
 	"github.com/TeaWeb/plugin/plugins"
@@ -10,6 +11,7 @@ import (
 	"net/http/httputil"
 	"os"
 	"reflect"
+	"runtime"
 )
 
 type Loader struct {
@@ -18,18 +20,43 @@ type Loader struct {
 	methods   map[string]reflect.Method
 	thisValue reflect.Value
 
-	reader *os.File
-	writer *os.File
+	reader PipeInterface
+	writer PipeInterface
 
 	debug bool
 }
 
+type PipeInterface interface {
+	Read([]byte) (n int, err error)
+	Write([]byte) (n int, err error)
+}
+
 func NewLoader(plugin *plugins.Plugin) *Loader {
+	rFile := `\\.\pipe\teaweb-readerpipe`
+	wFile := `\\.\pipe\teaweb-writerpipe`
+
 	loader := &Loader{
 		plugin:  plugin,
 		methods: map[string]reflect.Method{},
-		reader:  os.NewFile(uintptr(3), "parentReader"),
-		writer:  os.NewFile(uintptr(4), "parentWriter"),
+	}
+
+	if runtime.GOOS == "windows" {
+		rConn, err := winio.DialPipe(wFile, nil)
+		if err != nil {
+			log.Println("[plugin]dial reader pipe:" + err.Error())
+		} else {
+			loader.reader = rConn
+		}
+
+		wConn, err := winio.DialPipe(rFile, nil)
+		if err != nil {
+			log.Println("[plugin]dial writer pipe:" + err.Error())
+		} else {
+			loader.writer = wConn
+		}
+	} else {
+		loader.reader = os.NewFile(uintptr(3), "parentReader")
+		loader.writer = os.NewFile(uintptr(4), "parentWriter")
 	}
 
 	// 当前methods
