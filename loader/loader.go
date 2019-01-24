@@ -3,14 +3,11 @@ package loader
 import (
 	"encoding/binary"
 	"errors"
-	"github.com/Microsoft/go-winio"
 	"github.com/TeaWeb/plugin/messages"
 	"github.com/TeaWeb/plugin/plugins"
 	"log"
 	"net/http/httputil"
-	"os"
 	"reflect"
-	"runtime"
 )
 
 type Loader struct {
@@ -28,52 +25,6 @@ type Loader struct {
 type PipeInterface interface {
 	Read([]byte) (n int, err error)
 	Write([]byte) (n int, err error)
-}
-
-func NewLoader(plugin *plugins.Plugin) *Loader {
-	rFile := `\\.\pipe\teaweb-readerpipe`
-	wFile := `\\.\pipe\teaweb-writerpipe`
-
-	loader := &Loader{
-		plugin:  plugin,
-		methods: map[string]reflect.Method{},
-	}
-
-	if runtime.GOOS == "windows" {
-		rConn, err := winio.DialPipe(wFile, nil)
-		if err != nil {
-			log.Println("[plugin]dial reader pipe:" + err.Error())
-		} else {
-			loader.reader = rConn
-		}
-
-		wConn, err := winio.DialPipe(rFile, nil)
-		if err != nil {
-			log.Println("[plugin]dial writer pipe:" + err.Error())
-		} else {
-			loader.writer = wConn
-		}
-	} else {
-		loader.reader = os.NewFile(uintptr(3), "parentReader")
-		loader.writer = os.NewFile(uintptr(4), "parentWriter")
-	}
-
-	// 当前methods
-	t := reflect.TypeOf(loader)
-	for i := 0; i < t.NumMethod(); i++ {
-		method := t.Method(i)
-		loader.methods[method.Name] = method
-	}
-
-	loader.thisValue = reflect.ValueOf(loader)
-
-	plugin.OnReloadedApps(func() {
-		loader.Write(&messages.ReloadAppsAction{
-			Apps: plugin.Apps,
-		})
-	})
-
-	return loader
 }
 
 func (this *Loader) Debug() {
