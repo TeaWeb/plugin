@@ -7,12 +7,15 @@ import (
 	"github.com/TeaWeb/plugin/messages"
 	"github.com/TeaWeb/plugin/plugins"
 	"log"
+	"os"
+	"path/filepath"
 	"reflect"
 )
 
 func NewLoader(plugin *plugins.Plugin) *Loader {
-	rFile := `\\.\pipe\teaweb-readerpipe`
-	wFile := `\\.\pipe\teaweb-writerpipe`
+	filename := filepath.Base(os.Args[0])
+	rFile := `\\.\pipe\teaweb.reader.` + filename + `.pipe`
+	wFile := `\\.\pipe\teaweb.writer.` + filename + `.pipe`
 
 	loader := &Loader{
 		plugin:  plugin,
