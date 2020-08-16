@@ -1,7 +1,7 @@
 package loader
 
 import (
-	"github.com/TeaWeb/plugin/plugins"
+	"github.com/TeaWeb/plugin/pkg/plugins"
 )
 
 var sharedLoader *Loader

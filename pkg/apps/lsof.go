@@ -3,7 +3,7 @@ package apps
 import (
 	"errors"
 	"fmt"
-	"github.com/TeaWeb/plugin/utils/types"
+	"github.com/TeaWeb/plugin/internal/utils/types"
 	"strings"
 )
 

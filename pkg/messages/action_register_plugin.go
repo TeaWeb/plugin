@@ -1,6 +1,6 @@
 package messages
 
-import "github.com/TeaWeb/plugin/plugins"
+import "github.com/TeaWeb/plugin/pkg/plugins"
 
 type RegisterPluginAction struct {
 	Action

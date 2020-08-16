@@ -1,7 +1,7 @@
 package plugins
 
 import (
-	"github.com/TeaWeb/plugin/apps"
+	"github.com/TeaWeb/plugin/pkg/apps"
 	"net/http"
 )
 

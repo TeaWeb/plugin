@@ -1,6 +1,6 @@
 package messages
 
-import "github.com/TeaWeb/plugin/apps"
+import "github.com/TeaWeb/plugin/pkg/apps"
 
 type ReloadAppsAction struct {
 	Action

@@ -3,8 +3,8 @@
 package loader
 
 import (
-	"github.com/TeaWeb/plugin/messages"
-	"github.com/TeaWeb/plugin/plugins"
+	"github.com/TeaWeb/plugin/pkg/messages"
+	"github.com/TeaWeb/plugin/pkg/plugins"
 	"os"
 	"reflect"
 )

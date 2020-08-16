@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/TeaWeb/plugin/loader"
-	"github.com/TeaWeb/plugin/plugins"
+	"github.com/TeaWeb/plugin/pkg/loader"
+	"github.com/TeaWeb/plugin/pkg/plugins"
 )
 
 func main() {
