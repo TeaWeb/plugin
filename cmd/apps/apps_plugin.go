@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/TeaWeb/plugin/apps"
-	"github.com/TeaWeb/plugin/apps/probes"
+	"github.com/TeaWeb/plugin/pkg/apps"
+	"github.com/TeaWeb/plugin/pkg/apps/probes"
 	"github.com/TeaWeb/plugin/pkg/loader"
 	"github.com/TeaWeb/plugin/pkg/plugins"
 	"log"
@@ -38,7 +38,7 @@ func main() {
 				return versionString, nil
 			})
 			resultApps, _ := probe.Run()
-			p.AddApp(resultApps ...)
+			p.AddApp(resultApps...)
 		}
 
 		{
@@ -54,7 +54,7 @@ func main() {
 				return versionString, nil
 			})
 			resultApps, _ := probe.Run()
-			p.AddApp(resultApps ...)
+			p.AddApp(resultApps...)
 		}
 
 		{
@@ -74,7 +74,7 @@ func main() {
 				return versionString, nil
 			})
 			resultApps, _ := probe.Run()
-			p.AddApp(resultApps ...)
+			p.AddApp(resultApps...)
 		}
 
 		{
@@ -95,7 +95,7 @@ func main() {
 				return versionString, nil
 			})
 			resultApps, _ := probe.Run()
-			p.AddApp(resultApps ...)
+			p.AddApp(resultApps...)
 		}
 
 		{
@@ -119,7 +119,7 @@ func main() {
 				return true
 			})
 			resultApps, _ := probe.Run()
-			p.AddApp(resultApps ...)
+			p.AddApp(resultApps...)
 		}
 
 		log.Println("[apps]", len(p.Apps), "apps")
