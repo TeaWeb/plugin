@@ -1,7 +1,7 @@
 package messages
 
 import (
-	"github.com/TeaWeb/plugin/plugins"
+	"github.com/TeaWeb/plugin/pkg/plugins"
 	"testing"
 )
 
